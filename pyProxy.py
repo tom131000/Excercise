@@ -97,6 +97,10 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
             break
 
 
+def hexdump(src,length=16):
+    result = []
+    digits = 4 if isinstance(src, str) else 2
+
 def main():
 
     # 没有华丽的命令行解析
