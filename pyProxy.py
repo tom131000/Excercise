@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+#coding=utf8
 import sys
 import threading
 import socket
@@ -21,7 +22,6 @@ def server_loop(local_host, local_port, remote_host, remote_port,
 
     while True:
         client_socket, addr = server.accept()
-
         # 打印出本地连接信息
         print ("【==》】 Received incoming connection from %s:%d" %
                (addr[0],addr[1]))
@@ -31,7 +31,6 @@ def server_loop(local_host, local_port, remote_host, remote_port,
                                                                     remote_host
                                                                     ,remote_port
                                                                     ,receive_first))
-
         proxy_thread.start()
 
 
@@ -45,7 +44,7 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
     if receive_first:
 
         remote_buffer = receive_from(remote_socket)
-        hexdumo(remote_buffer)
+        hexdump(remote_buffer)
 
         # 发送给我们的响应处理
         remote_buffer = response_handler(remote_buffer)
@@ -100,6 +99,44 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
 def hexdump(src,length=16):
     result = []
     digits = 4 if isinstance(src, str) else 2
+
+    for i in range(0, len(src), length):
+        s = src[i:i+length]
+        hexa = ' '.join(["%0*X" % (digits, x) for x in s])
+        text = ''.join(([chr(x) if 0x20 <= x < 0x7f else '.' for x in s]))
+        result.append("%04X %-*s %s" % (i, length* (digits + 1),
+                      hexa, text))
+
+        print('\n'.join(result))
+
+
+def receive_from(connection):
+
+    buffer = ""
+
+    connection.settimeout(2)
+
+    try:
+        while True:
+            data = connection.recv(4096)
+
+            if not data:
+                break
+            data = bytes.decode(data)
+            buffer += data
+            buffer = str.encode(buffer)
+
+    except:
+        pass
+
+    return buffer
+
+def request_handler(buffer):
+    return  buffer
+
+def response_handler(buffer):
+    return buffer
+
 
 def main():
 
