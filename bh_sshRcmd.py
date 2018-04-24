@@ -21,4 +21,4 @@ def ssh_command(ip, user, passwd, command):
         client.close()
     return
 
-ssh_command('','pi','pi','ClientConnected')
+ssh_command('192.186.6.129','pi','pi','ClientConnected')
