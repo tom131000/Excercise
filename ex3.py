@@ -10,4 +10,4 @@ data, addr = client.recvfrom(4096)
 
 print(data)
 
-client.close()
+close = client.close()
